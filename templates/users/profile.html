@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h2>Xush kelibsiz, {{ user.first_name }} {{ user.last_name }}!</h2>
+    <hr>
+    <p><strong>Loginingiz:</strong> {{ user.username }}</p>
+    <p><strong>Rolingiz:</strong> {{ user.get_role_display }}</p>
+    <p><strong>Telefoningiz:</strong> {{ user.phone|default:"Kiritilmagan" }}</p>
+
+    {% if user.is_admin %}
+        <div class="alert alert-danger mt-3">Siz tizimda ADMIN huquqiga egasiz!</div>
+    {% elif user.is_mentor %}
+        <div class="alert alert-info mt-3">Siz MENTOR huquqiga egasiz!</div>
+    {% else %}
+        <div class="alert alert-success mt-3">Siz STUDENT (Talaba) hisoblanasiz.</div>
+    {% endif %}
+</div>
+{% endblock %}

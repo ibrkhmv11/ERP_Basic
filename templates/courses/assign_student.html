@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow p-4">
+        <h3 class="mb-4 text-success">🎓 Guruhga Talaba Biriktirish</h3>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+            
+            <button type="submit" class="btn btn-success w-100 mb-2">Talabani Biriktirish</button>
+            <a href="{% url 'group_list' %}" class="btn btn-outline-secondary w-100">Orqaga qaytish</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

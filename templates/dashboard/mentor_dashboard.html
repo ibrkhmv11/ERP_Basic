@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">👨‍🏫 Mentor Boshqaruv Paneli</h2>
+
+<div class="card p-4 shadow-sm bg-white">
+    <h5>📋 Mening Guruhlarim va Davomat</h5>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Guruh Nomi</th>
+                    <th>Kurs</th>
+                    <th>Amal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in my_groups %}
+                <tr>
+                    <td><strong>{{ group.name }}</strong></td>
+                    <td>{{ group.course.name }}</td>
+                    <td>
+                        <a href="{% url 'attendance' group.id %}" class="btn btn-sm btn-warning">📋 Davomat va Baholash</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="text-center">Sizga biriktirilgan faol guruhlar yo'q.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Guruh haqida ma'lumot -->
+    <div class="col-md-4 mb-4">
+        <div class="card p-3 shadow-sm">
+            <h4>{{ group.name }}</h4>
+            <hr>
+            <p><strong>Kurs:</strong> {{ group.course.name }}</p>
+            <p><strong>Mentor:</strong> {{ group.mentor.get_full_name|default:group.mentor.username|default:"Biriktirilmagan" }}</p>
+            <p><strong>Boshlanish sanasi:</strong> {{ group.start_date }}</p>
+            <p><strong>Holati:</strong> 
+                {% if group.is_active %}
+                    <span class="badge bg-success">Faol</span>
+                {% else %}
+                    <span class="badge bg-danger">Yopilgan</span>
+                {% endif %}
+            </p>
+
+            {% if user.is_admin or user.is_mentor %}
+                <a href="{% url 'attendance' group.id %}" class="btn btn-warning w-100 mb-2">📋 Davomat va Baholash</a>
+            {% endif %}
+
+            <a href="{% url 'group_list' %}" class="btn btn-outline-secondary mt-2">← Ortga</a>
+        </div>
+    </div>
+
+    <!-- Talabalar ro'yxati va Qo'shish formasi -->
+    <div class="col-md-8">
+        {% if user.is_admin %}
+            <div class="card p-3 shadow-sm mb-4">
+                <h5>Guruhga Talaba Qo'shish</h5>
+                <form method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <div class="flex-grow-1">
+                        {{ form.student }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">+ Qo'shish</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <div class="card p-3 shadow-sm">
+            <h5>Guruh Talabalari ({{ students.count }} ta)</h5>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ism Familiya</th>
+                            <th>Username</th>
+                            <th>Qo'shilgan Sanasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in students %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.student.get_full_name|default:item.student.username }}</td>
+                            <td>@{{ item.student.username }}</td>
+                            <td>{{ item.joined_at }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">Bu guruhda xali talabalar yo'q.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

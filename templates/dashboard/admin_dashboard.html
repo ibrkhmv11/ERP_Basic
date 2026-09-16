@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">👑 Admin Boshqaruv Paneli</h2>
+
+<!-- Statistika Kartochkalari -->
+<div class="row mb-4">
+    <div class="col-md-3"><div class="card bg-primary text-white p-3 shadow-sm"><h4>{{ total_students }}</h4>Jami Talabalar</div></div>
+    <div class="col-md-3"><div class="card bg-success text-white p-3 shadow-sm"><h4>{{ total_mentors }}</h4>Jami Mentorlar</div></div>
+    <div class="col-md-3"><div class="card bg-warning text-dark p-3 shadow-sm"><h4>{{ total_courses }}</h4>Mavjud Kurslar</div></div>
+    <div class="col-md-3"><div class="card bg-info text-white p-3 shadow-sm"><h4>{{ total_groups }}</h4>Faol Guruhlar</div></div>
+</div>
+
+<div class="row">
+    <!-- Umumiy Tushum -->
+    <div class="col-md-6 mb-3">
+        <div class="card p-4 shadow-sm border-start border-4 border-success h-100">
+            <h5>💰 Umumiy Tushum</h5>
+            <h3 class="text-success fw-bold mt-2">{{ total_revenue }} so'm</h3>
+        </div>
+    </div>
+
+    <!-- Tezkor Boshqaruv -->
+    <div class="col-md-6 mb-3">
+        <div class="card p-4 shadow-sm h-100">
+            <h5 class="mb-3">⚡ Tezkor Boshqaruv</h5>
+            <div class="d-grid gap-2">
+                <!-- Yangi qo'shilgan tugma -->
+                <a href="{% url 'user_management' %}" class="btn btn-outline-dark">
+                    👥 Foydalanuvchilar va Rollarni Boshqarish
+                </a>
+
+                <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Kurslar</a>
+                <a href="{% url 'group_list' %}" class="btn btn-outline-success">Guruhlar</a>
+
+                <!-- O'ZIMIZNING ICHKI SAHIFA: Guruhga o'quvchi biriktirish -->
+                <a href="{% url 'assign_student' %}" class="btn btn-outline-secondary">
+                    🎓 Guruhga Talaba Biriktirish
+                </a>
+
+                <a href="{% url 'payment_list' %}" class="btn btn-outline-warning">Moliya</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

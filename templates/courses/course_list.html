@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Kurslar Ro'yxati</h2>
+    {% if user.is_admin %}
+        <a href="{% url 'course_create' %}" class="btn btn-primary">+ Yangi Kurs</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% for course in courses %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ course.name }}</h5>
+                <p class="card-text text-muted">{{ course.description|default:"Tavsif berilmagan" }}</p>
+                <hr>
+                <p class="mb-1"><strong>Narxi:</strong> {{ course.price }} so'm</p>
+                <p class="mb-0"><strong>Davomiyligi:</strong> {{ course.duration_months }} oy</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Hozircha hech qanday kurs mavjud emas.</p>
+    {% endfor %}
+</div>
+{% endblock %}

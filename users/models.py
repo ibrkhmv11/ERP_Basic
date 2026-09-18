@@ -36,6 +36,7 @@ class User(AbstractUser):
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='STUDENT')
     phone = models.CharField(max_length=15, blank=True, null=True)  # Telefon maydoni
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)  # Profil rasmi
 
     objects = CustomUserManager()  # Manager'ni shu yerga ulaymiz
 

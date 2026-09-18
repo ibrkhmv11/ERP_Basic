@@ -1,48 +1,189 @@
-{% extends 'base.html' %}
+{% extends 'base_student.html' %}
+
+{% block title %}Talaba Paneli — Najot ERP{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">🎓 Talaba Paneli</h2>
 
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card p-3 shadow-sm bg-white">
-            <h5>📚 Mening Guruhlarim</h5>
-            <hr>
-            <ul class="list-group">
-                {% for item in enrolled_groups %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ item.group.name }} ({{ item.group.course.name }})
-                        <span class="badge bg-primary rounded-pill">A'zo</span>
-                    </li>
-                {% empty %}
-                    <li class="list-group-item text-muted">Siz hech qanday guruhga a'zo emassiz.</li>
-                {% endfor %}
-            </ul>
+<!-- ── Welcome Header ── -->
+<div class="page-header">
+    <div>
+        <h1>Xush kelibsiz, {{ user.get_full_name|default:user.username }}! 🎯</h1>
+        <div class="page-subtitle">O'quv jarayoni va moliyaviy holatingiz xulosasi</div>
+    </div>
+</div>
+
+<!-- ── Gamified Stat Widgets ── -->
+<div class="row g-4 mb-5">
+    <!-- Stat 1: Total Groups -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card p-4 h-100" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; position: relative; overflow: hidden;">
+            <div style="position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff;">
+                    <i class="bi bi-stack"></i>
+                </div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Guruhlarim</div>
+            </div>
+            <div style="font-size: 2.5rem; font-weight: 800; color: #fff; line-height: 1;">
+                {{ enrolled_groups|length }}
+                <span style="font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.7);">ta faol guruh</span>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-6 mb-4">
-        <div class="card p-3 shadow-sm bg-white">
-            <h5>💳 Moliyaviy Holat</h5>
-            <hr>
-            <p>Qarzdorlik: 
-                {% if debt > 0 %}
-                    <span class="badge bg-danger fs-6">{{ debt }} so'm</span>
-                {% else %}
-                    <span class="badge bg-success fs-6">Qarzdorlik yo'q</span>
-                {% endif %}
-            </p>
-            <h6 class="mt-3">To'lovlar Tarixi:</h6>
-            <ul class="list-group list-group-flush">
-                {% for payment in my_payments %}
-                    <li class="list-group-item text-success">
-                        +{{ payment.amount }} so'm ({{ payment.created_at|date:"d.m.Y" }})
-                    </li>
-                {% empty %}
-                    <li class="list-group-item text-muted">Hali to'lovlar yo'q.</li>
-                {% endfor %}
-            </ul>
+    <!-- Stat 2: Avg Attendance (UI Mock/Gamified) -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card p-4 h-100" style="background: linear-gradient(135deg, #10b981, #059669); border: none; position: relative; overflow: hidden;">
+            <div style="position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff;">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                </div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Davomat (O'rtacha)</div>
+            </div>
+            <div style="font-size: 2.5rem; font-weight: 800; color: #fff; line-height: 1;">
+                92<span style="font-size: 1.5rem;">%</span>
+                <span style="font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.7);">A'lo daraja!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stat 3: Total Score/Rating (UI Mock/Gamified) -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card p-4 h-100" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; position: relative; overflow: hidden;">
+            <div style="position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff;">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">To'plangan Ball</div>
+            </div>
+            <div style="font-size: 2.5rem; font-weight: 800; color: #fff; line-height: 1;">
+                850
+                <span style="font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.7);">XP / Lvl 5</span>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="row g-4">
+    <!-- ── Enrolled Groups ── -->
+    <div class="col-xl-7">
+        <div class="card p-0 border-0 h-100">
+            <div class="p-4 border-bottom border-light d-flex align-items-center justify-content-between">
+                <h5 class="mb-0 fw-bold d-flex align-items-center gap-2" style="color: #1e293b;">
+                    <i class="bi bi-book-half" style="color: #6366f1;"></i> Mening Guruhlarim
+                </h5>
+                <span class="badge" style="background: #e0e7ff; color: #4f46e5; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px;">
+                    Jami: {{ enrolled_groups|length }}
+                </span>
+            </div>
+            
+            <div class="p-4">
+                <div class="d-flex flex-column gap-3">
+                    {% for item in enrolled_groups %}
+                    <div class="p-3" style="border: 1px solid #e2e8f0; border-radius: 16px; transition: all 0.2s; background: #fff;" onmouseover="this.style.borderColor='#6366f1'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.1)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                            <div class="d-flex gap-3">
+                                <div style="width: 50px; height: 50px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #6366f1; flex-shrink: 0;">
+                                    <i class="bi bi-mortarboard"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold" style="font-size: 1.05rem; color: #0f172a;">{{ item.group.name }}</h6>
+                                    <div class="d-flex flex-wrap gap-3" style="font-size: 0.85rem; color: #64748b;">
+                                        <span title="Kurs Nomi"><i class="bi bi-journal-text me-1"></i> {{ item.group.course.name }}</span>
+                                        <span title="Mentor"><i class="bi bi-person-workspace me-1"></i> {{ item.group.mentor.get_full_name|default:item.group.mentor.username|default:"Biriktirilmagan" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                {% if item.group.is_active %}
+                                    <span class="badge" style="background: #dcfce7; color: #16a34a; border-radius: 8px; padding: 6px 10px;"><i class="bi bi-circle-fill me-1" style="font-size: 0.4rem; vertical-align: middle;"></i> Davom etmoqda</span>
+                                {% else %}
+                                    <span class="badge" style="background: #f1f5f9; color: #64748b; border-radius: 8px; padding: 6px 10px;">Yakunlangan</span>
+                                {% endif %}
+                                <div class="mt-2" style="font-size: 0.75rem; color: #94a3b8;">
+                                    <i class="bi bi-calendar-event me-1"></i> Boshlangan: {{ item.group.start_date }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-emoji-frown" style="font-size: 3rem; color: #cbd5e1;"></i>
+                        <p class="mt-3 text-muted fw-medium">Siz hali hech qanday guruhga a'zo emassiz.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Financial Status ── -->
+    <div class="col-xl-5">
+        <div class="card p-0 border-0 h-100">
+            <div class="p-4 border-bottom border-light d-flex align-items-center gap-2">
+                <i class="bi bi-wallet2" style="color: #10b981; font-size: 1.2rem;"></i>
+                <h5 class="mb-0 fw-bold" style="color: #1e293b;">Moliyaviy Holat</h5>
+            </div>
+            
+            <div class="p-4">
+                <!-- Status & Progress -->
+                <div class="p-4 rounded-4 mb-4" style="background: {% if debt > 0 %}#fef2f2{% else %}#f0fdf4{% endif %}; border: 1px solid {% if debt > 0 %}#fecaca{% else %}#bbf7d0{% endif %};">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold" style="color: {% if debt > 0 %}#991b1b{% else %}#166534{% endif %}; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Joriy Qarzdorlik</span>
+                        {% if debt > 0 %}
+                            <span class="badge" style="background: #ef4444; color: #fff; padding: 6px 10px; border-radius: 6px;"><i class="bi bi-exclamation-circle me-1"></i> To'lov kutilmoqda</span>
+                        {% else %}
+                            <span class="badge" style="background: #10b981; color: #fff; padding: 6px 10px; border-radius: 6px;"><i class="bi bi-check-circle-fill me-1"></i> Barchasi to'langan</span>
+                        {% endif %}
+                    </div>
+                    <div class="fw-bolder" style="font-size: 2.2rem; color: {% if debt > 0 %}#dc2626{% else %}#15803d{% endif %}; line-height: 1;">
+                        {{ debt }} <span style="font-size: 1rem; font-weight: 600;">so'm</span>
+                    </div>
+                    
+                    {% if debt > 0 %}
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-1" style="font-size: 0.75rem; font-weight: 600; color: #7f1d1d;">
+                            <span>To'langan</span>
+                            <span>Qarzdorlik</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 10px; background: #fca5a5;">
+                            <!-- Progress bar visual simulation based on UI context -->
+                            <div class="progress-bar" role="progressbar" style="width: 45%; background: #dc2626; border-radius: 10px;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Payment History -->
+                <h6 class="fw-bold mb-3" style="color: #475569; font-size: 0.95rem;">So'nggi To'lovlar Tarixi</h6>
+                <div class="d-flex flex-column gap-2">
+                    {% for payment in my_payments %}
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background: #f8fafc; border: 1px solid #f1f5f9;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 36px; height: 36px; background: #dcfce7; color: #16a34a; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-arrow-down-left"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold" style="font-size: 0.9rem; color: #1e293b;">To'lov qabul qilindi</div>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">{{ payment.created_at|date:"d.m.Y, H:i" }}</div>
+                            </div>
+                        </div>
+                        <div class="fw-bold" style="color: #10b981; font-size: 0.95rem;">
+                            +{{ payment.amount }} <span style="font-size: 0.75rem;">so'm</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 rounded-3" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+                        <i class="bi bi-receipt text-muted" style="font-size: 1.5rem;"></i>
+                        <p class="mb-0 mt-2 text-muted" style="font-size: 0.85rem;">Hali to'lovlar yo'q.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

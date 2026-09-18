@@ -1,20 +1,5 @@
-{% if user.is_admin %}
-    {% extends 'base_admin.html' %}
-{% elif user.is_mentor %}
-    {% extends 'base_mentor.html' %}
-{% else %}
-    {% extends 'base_student.html' %}
-{% endif %}
-
-{% block title %}Mening Profilim — Najot ERP{% endblock %}
-{% block page_title %}Profil{% endblock %}
-{% block nav_dashboard %}{% endblock %}
-
-{% block content %}
-
 {# ─── Page styles ─── #}
 <style>
-    /* Avatar circle */
     .profile-avatar-lg {
         width: 100px; height: 100px;
         border-radius: 50%;
@@ -31,8 +16,6 @@
         object-fit: cover;
         border-radius: 50%;
     }
-
-    /* Role badge */
     .role-badge {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 5px 14px; border-radius: 100px;
@@ -42,8 +25,6 @@
     .role-badge.admin   { background: #fde8ff; color: #a21caf; }
     .role-badge.mentor  { background: #ccfbf1; color: #0f766e; }
     .role-badge.student { background: #e0e7ff; color: #4338ca; }
-
-    /* Info row */
     .info-row {
         display: flex; align-items: center; gap: 10px;
         padding: 12px 0; border-bottom: 1px solid #f1f5f9;
@@ -57,58 +38,21 @@
         color: var(--primary, #6366f1); font-size: .95rem;
         flex-shrink: 0;
     }
-    .info-row .info-label {
-        font-size: .7rem; font-weight: 700; color: #94a3b8;
-        text-transform: uppercase; letter-spacing: .5px;
-        line-height: 1;
-    }
-    .info-row .info-value {
-        font-size: .9rem; font-weight: 600; color: #1e293b;
-        margin-top: 2px;
-    }
-
-    /* Tabs */
+    .info-row .info-label { font-size: .7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; line-height: 1; }
+    .info-row .info-value { font-size: .9rem; font-weight: 600; color: #1e293b; margin-top: 2px; }
     .profile-tabs .nav-link {
         color: #64748b; font-weight: 600; font-size: .85rem;
         border: none; border-bottom: 2px solid transparent;
-        padding: 10px 18px; border-radius: 0;
-        transition: all .2s;
+        padding: 10px 18px; border-radius: 0; transition: all .2s;
     }
-    .profile-tabs .nav-link.active {
-        color: var(--primary, #6366f1);
-        border-bottom-color: var(--primary, #6366f1);
-        background: transparent;
-    }
-    .profile-tabs .nav-link:hover { color: var(--primary, #6366f1); }
-
-    /* Avatar preview */
-    #avatar-preview-wrap {
-        position: relative; display: inline-block;
-    }
-    #avatar-preview {
-        width: 80px; height: 80px; border-radius: 50%;
-        object-fit: cover; border: 3px solid var(--primary-light, #eef2ff);
-        display: none;
-    }
-    #avatar-placeholder {
-        width: 80px; height: 80px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary, #6366f1), var(--primary-dark, #4f46e5));
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.8rem; font-weight: 800; color: #fff;
-    }
-
-    /* Toast */
+    .profile-tabs .nav-link.active { color: var(--primary, #6366f1); border-bottom-color: var(--primary, #6366f1); background: transparent; }
+    .profile-tabs .nav-link:hover  { color: var(--primary, #6366f1); }
+    #avatar-preview-wrap { position: relative; display: inline-block; }
+    #avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light, #eef2ff); display: none; }
+    #avatar-placeholder { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary, #6366f1), var(--primary-dark, #4f46e5)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: #fff; }
     .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
-
-    /* Password strength bar */
     .strength-bar { height: 4px; border-radius: 2px; transition: all .3s; margin-top: 6px; }
-
-    /* Card header accent */
-    .card-accent-top {
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary, #6366f1), var(--primary-dark, #4f46e5));
-        border-radius: var(--card-radius, 14px) var(--card-radius, 14px) 0 0;
-    }
+    .card-accent-top { height: 4px; background: linear-gradient(90deg, var(--primary, #6366f1), var(--primary-dark, #4f46e5)); border-radius: var(--card-radius, 14px) var(--card-radius, 14px) 0 0; }
 </style>
 
 {# ─── Page header ─── #}
@@ -126,7 +70,7 @@
         <div class="toast align-items-center text-bg-{% if message.tags == 'success' %}success{% else %}danger{% endif %} border-0 show mb-2"
              role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
             <div class="d-flex">
-                <div class="toast-body fw-600">
+                <div class="toast-body">
                     <i class="bi bi-{% if message.tags == 'success' %}check-circle-fill{% else %}exclamation-triangle-fill{% endif %} me-2"></i>
                     {{ message }}
                 </div>
@@ -145,7 +89,6 @@
             <div class="card-accent-top"></div>
             <div class="card-body p-4 text-center d-flex flex-column align-items-center">
 
-                {# Avatar #}
                 <div class="profile-avatar-lg mb-3">
                     {% if user.avatar %}
                         <img src="{{ user.avatar.url }}" alt="{{ user.username }}">
@@ -154,13 +97,11 @@
                     {% endif %}
                 </div>
 
-                {# Ism / login #}
                 <h4 class="fw-800 mb-1" style="color:#1e293b; font-size:1.2rem;">
                     {{ user.get_full_name|default:user.username }}
                 </h4>
                 <div class="text-muted mb-3" style="font-size:.82rem;">@{{ user.username }}</div>
 
-                {# Rol badge #}
                 {% if user.is_admin %}
                     <span class="role-badge admin mb-4">
                         <i class="bi bi-shield-fill-check"></i> Admin
@@ -177,7 +118,6 @@
 
                 <hr class="w-100">
 
-                {# Info rows #}
                 <div class="w-100">
                     <div class="info-row">
                         <div class="info-icon"><i class="bi bi-person-fill"></i></div>
@@ -186,7 +126,6 @@
                             <div class="info-value">{{ user.username }}</div>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
                         <div>
@@ -194,7 +133,6 @@
                             <div class="info-value">{{ user.phone|default:"Kiritilmagan" }}</div>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
                         <div>
@@ -202,7 +140,6 @@
                             <div class="info-value">{{ user.email|default:"Kiritilmagan" }}</div>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-icon"><i class="bi bi-calendar3"></i></div>
                         <div>
@@ -211,7 +148,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -221,8 +157,7 @@
         <div class="card">
             <div class="card-accent-top"></div>
 
-            {# Tabs #}
-            <ul class="nav profile-tabs border-bottom px-3 pt-2" id="profileTabs">
+            <ul class="nav profile-tabs border-bottom px-3 pt-2">
                 <li class="nav-item">
                     <button class="nav-link {% if active_tab != 'password' %}active{% endif %}"
                             data-bs-toggle="tab" data-bs-target="#tab-profile" type="button">
@@ -239,12 +174,11 @@
 
             <div class="tab-content p-4">
 
-                {# ── Tab 1: Profil tahrirlash ── #}
+                {# Tab 1: Profil tahrirlash #}
                 <div class="tab-pane fade {% if active_tab != 'password' %}show active{% endif %}" id="tab-profile">
-                    <form method="POST" action="{% url 'profile_update' %}" enctype="multipart/form-data" id="profileForm">
+                    <form method="POST" action="{% url 'profile_update' %}" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        {# Avatar preview + yuklash #}
                         <div class="mb-4">
                             <label class="form-label">Profil rasmi</label>
                             <div class="d-flex align-items-center gap-3">
@@ -260,60 +194,35 @@
                                 <div class="flex-grow-1">
                                     {{ profile_form.avatar }}
                                     <div class="form-text text-muted" style="font-size:.75rem;">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Maks. 2MB · JPG, PNG, WebP
+                                        <i class="bi bi-info-circle me-1"></i>Maks. 2MB · JPG, PNG, WebP
                                     </div>
                                     {% if profile_form.avatar.errors %}
-                                        <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                            {{ profile_form.avatar.errors|join:", " }}
-                                        </div>
+                                        <div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ profile_form.avatar.errors|join:", " }}</div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
 
                         <div class="row g-3">
-                            {# Ism #}
                             <div class="col-md-6">
                                 <label class="form-label">{{ profile_form.first_name.label }}</label>
                                 {{ profile_form.first_name }}
-                                {% if profile_form.first_name.errors %}
-                                    <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                        {{ profile_form.first_name.errors|join:", " }}
-                                    </div>
-                                {% endif %}
+                                {% if profile_form.first_name.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ profile_form.first_name.errors|join:", " }}</div>{% endif %}
                             </div>
-
-                            {# Familiya #}
                             <div class="col-md-6">
                                 <label class="form-label">{{ profile_form.last_name.label }}</label>
                                 {{ profile_form.last_name }}
-                                {% if profile_form.last_name.errors %}
-                                    <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                        {{ profile_form.last_name.errors|join:", " }}
-                                    </div>
-                                {% endif %}
+                                {% if profile_form.last_name.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ profile_form.last_name.errors|join:", " }}</div>{% endif %}
                             </div>
-
-                            {# Telefon #}
                             <div class="col-12">
                                 <label class="form-label">{{ profile_form.phone.label }}</label>
                                 {{ profile_form.phone }}
-                                <div class="form-text text-muted" style="font-size:.75rem;">
-                                    <i class="bi bi-info-circle me-1"></i>Format: +998901234567
-                                </div>
-                                {% if profile_form.phone.errors %}
-                                    <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                        {{ profile_form.phone.errors|join:", " }}
-                                    </div>
-                                {% endif %}
+                                <div class="form-text text-muted" style="font-size:.75rem;"><i class="bi bi-info-circle me-1"></i>Format: +998901234567</div>
+                                {% if profile_form.phone.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ profile_form.phone.errors|join:", " }}</div>{% endif %}
                             </div>
-
-                            {# Login (readonly) #}
                             <div class="col-12">
-                                <label class="form-label">Login <span class="text-muted fw-400">(o'zgartirib bo'lmaydi)</span></label>
-                                <input type="text" class="form-control" value="{{ user.username }}" disabled
-                                       style="background:#f8fafc; color:#94a3b8;">
+                                <label class="form-label">Login <span class="text-muted" style="font-weight:400;">(o'zgartirib bo'lmaydi)</span></label>
+                                <input type="text" class="form-control" value="{{ user.username }}" disabled style="background:#f8fafc; color:#94a3b8;">
                             </div>
                         </div>
 
@@ -321,60 +230,41 @@
                             <button type="reset" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-counterclockwise me-1"></i>Bekor qilish
                             </button>
-                            <button type="submit" class="btn btn-primary" id="saveProfileBtn">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle-fill me-1"></i>Saqlash
                             </button>
                         </div>
                     </form>
                 </div>
 
-                {# ── Tab 2: Parol o'zgartirish ── #}
+                {# Tab 2: Parol o'zgartirish #}
                 <div class="tab-pane fade {% if active_tab == 'password' %}show active{% endif %}" id="tab-password">
-                    <div class="mb-4">
-                        <p class="text-muted" style="font-size:.85rem;">
-                            <i class="bi bi-shield-lock-fill me-1 text-primary"></i>
-                            Xavfsizlik uchun kuchli parol tanlang. Parol kamida 8 ta belgi bo'lishi kerak.
-                        </p>
-                    </div>
+                    <p class="text-muted mb-4" style="font-size:.85rem;">
+                        <i class="bi bi-shield-lock-fill me-1 text-primary"></i>
+                        Xavfsizlik uchun kuchli parol tanlang. Parol kamida 8 ta belgi bo'lishi kerak.
+                    </p>
 
-                    <form method="POST" action="{% url 'password_change' %}" id="passwordForm">
+                    <form method="POST" action="{% url 'password_change' %}">
                         {% csrf_token %}
 
-                        {# Joriy parol #}
                         <div class="mb-3">
                             <label class="form-label">{{ password_form.old_password.label }}</label>
                             {{ password_form.old_password }}
-                            {% if password_form.old_password.errors %}
-                                <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                    {{ password_form.old_password.errors|join:", " }}
-                                </div>
-                            {% endif %}
+                            {% if password_form.old_password.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ password_form.old_password.errors|join:", " }}</div>{% endif %}
                         </div>
 
-                        {# Yangi parol #}
                         <div class="mb-3">
                             <label class="form-label">{{ password_form.new_password1.label }}</label>
                             {{ password_form.new_password1 }}
                             <div class="strength-bar" id="strengthBar" style="background:#e2e8f0; width:0%;"></div>
-                            <div class="form-text text-muted" style="font-size:.75rem; margin-top:6px;">
-                                {{ password_form.new_password1.help_text }}
-                            </div>
-                            {% if password_form.new_password1.errors %}
-                                <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                    {{ password_form.new_password1.errors|join:", " }}
-                                </div>
-                            {% endif %}
+                            <div class="form-text text-muted" style="font-size:.75rem; margin-top:6px;">{{ password_form.new_password1.help_text }}</div>
+                            {% if password_form.new_password1.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ password_form.new_password1.errors|join:", " }}</div>{% endif %}
                         </div>
 
-                        {# Tasdiqlash #}
                         <div class="mb-4">
                             <label class="form-label">{{ password_form.new_password2.label }}</label>
                             {{ password_form.new_password2 }}
-                            {% if password_form.new_password2.errors %}
-                                <div class="text-danger" style="font-size:.8rem; margin-top:4px;">
-                                    {{ password_form.new_password2.errors|join:", " }}
-                                </div>
-                            {% endif %}
+                            {% if password_form.new_password2.errors %}<div class="text-danger" style="font-size:.8rem; margin-top:4px;">{{ password_form.new_password2.errors|join:", " }}</div>{% endif %}
                         </div>
 
                         <div class="d-flex justify-content-end">
@@ -385,24 +275,21 @@
                     </form>
                 </div>
 
-            </div>{# /tab-content #}
-        </div>{# /card #}
-    </div>{# /col #}
-
-</div>{# /row #}
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    // ── Toast auto-show ──
+    // Toast
     document.querySelectorAll('.toast').forEach(el => {
-        const t = new bootstrap.Toast(el, { delay: 4000 });
-        t.show();
+        new bootstrap.Toast(el, { delay: 4000 }).show();
     });
 
-    // ── Avatar live preview ──
+    // Avatar preview
     const avatarInput = document.querySelector('input[type="file"][name="avatar"]');
     const previewImg  = document.getElementById('avatar-preview');
     const placeholder = document.getElementById('avatar-placeholder');
-
     if (avatarInput) {
         avatarInput.addEventListener('change', function () {
             const file = this.files[0];
@@ -418,10 +305,9 @@
         });
     }
 
-    // ── Parol kuchi ko'rsatkichi ──
-    const pwInput = document.getElementById('{{ password_form.new_password1.id_for_label }}');
+    // Parol kuchi
+    const pwInput = document.getElementById('id_new_password1');
     const bar     = document.getElementById('strengthBar');
-
     if (pwInput && bar) {
         pwInput.addEventListener('input', function () {
             const val = this.value;
@@ -430,16 +316,15 @@
             if (/[A-Z]/.test(val)) score++;
             if (/[0-9]/.test(val)) score++;
             if (/[^A-Za-z0-9]/.test(val)) score++;
-
             const colors = ['#ef4444','#f59e0b','#3b82f6','#10b981'];
             const widths = ['25%','50%','75%','100%'];
-            bar.style.width   = val.length ? widths[score - 1] || '10%' : '0%';
-            bar.style.background = val.length ? colors[score - 1] || '#ef4444' : '#e2e8f0';
+            bar.style.width      = val.length ? (widths[score-1] || '10%') : '0%';
+            bar.style.background = val.length ? (colors[score-1] || '#ef4444') : '#e2e8f0';
         });
     }
 
-    // ── Parollar mosligini tekshirish ──
-    const pw2 = document.getElementById('{{ password_form.new_password2.id_for_label }}');
+    // Parollar mosligini tekshirish
+    const pw2 = document.getElementById('id_new_password2');
     if (pw2 && pwInput) {
         pw2.addEventListener('input', function () {
             if (this.value && this.value !== pwInput.value) {
@@ -452,5 +337,3 @@
         });
     }
 </script>
-
-{% endblock %}

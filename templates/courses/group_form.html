@@ -1,15 +1,40 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}Yangi Guruh — Najot ERP{% endblock %}
+{% block page_title %}Yangi Guruh{% endblock %}
+{% block nav_groups %}active{% endblock %}
 
 {% block content %}
+
 <div class="row justify-content-center">
-    <div class="col-md-6 card p-4 shadow-sm">
-        <h3 class="mb-3">Yangi Guruh Yaratish</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success mt-2">Saqlash</button>
-            <a href="{% url 'group_list' %}" class="btn btn-secondary mt-2">Bekor qilish</a>
-        </form>
+    <div class="col-lg-6 col-md-8">
+        <div class="page-header">
+            <div>
+                <h1>Yangi Guruh Yaratish</h1>
+                <div class="page-subtitle">Guruh ma'lumotlarini kiriting</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="height:5px; background:linear-gradient(90deg,#10b981,#059669);"></div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success flex-grow-1">
+                            <i class="bi bi-check-circle-fill me-2"></i>Saqlash
+                        </button>
+                        <a href="{% url 'group_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Bekor qilish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock %}

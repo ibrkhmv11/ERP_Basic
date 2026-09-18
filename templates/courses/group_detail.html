@@ -1,76 +1,153 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}{{ group.name }} — Najot ERP{% endblock %}
+{% block page_title %}Guruh: {{ group.name }}{% endblock %}
+{% block nav_groups %}active{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Guruh haqida ma'lumot -->
-    <div class="col-md-4 mb-4">
-        <div class="card p-3 shadow-sm">
-            <h4>{{ group.name }}</h4>
-            <hr>
-            <p><strong>Kurs:</strong> {{ group.course.name }}</p>
-            <p><strong>Mentor:</strong> {{ group.mentor.get_full_name|default:group.mentor.username|default:"Biriktirilmagan" }}</p>
-            <p><strong>Boshlanish sanasi:</strong> {{ group.start_date }}</p>
-            <p><strong>Holati:</strong> 
-                {% if group.is_active %}
-                    <span class="badge bg-success">Faol</span>
-                {% else %}
-                    <span class="badge bg-danger">Yopilgan</span>
-                {% endif %}
-            </p>
 
-            {% if user.is_admin or user.is_mentor %}
-                <a href="{% url 'attendance' group.id %}" class="btn btn-warning w-100 mb-2">📋 Davomat va Baholash</a>
-            {% endif %}
+<div class="row g-4">
 
-            <a href="{% url 'group_list' %}" class="btn btn-outline-secondary mt-2">← Ortga</a>
+    <!-- ── Left: Group Info ── -->
+    <div class="col-lg-4">
+
+        <!-- Group Card -->
+        <div class="card mb-3">
+            <div style="height:5px; background:linear-gradient(90deg,#6366f1,#8b5cf6);"></div>
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width:52px;height:52px;background:#eef2ff;border-radius:14px;
+                                display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                        <i class="bi bi-diagram-3-fill" style="font-size:1.4rem; color:#6366f1;"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-800 mb-0" style="font-size:1.1rem; color:#1e293b;">{{ group.name }}</h4>
+                        {% if group.is_active %}
+                            <span class="badge-pill badge-active mt-1 d-inline-block">Faol</span>
+                        {% else %}
+                            <span class="badge-pill badge-inactive mt-1 d-inline-block">Yopilgan</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr style="border-color:#f1f5f9;">
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2" style="font-size:.85rem;">
+                        <i class="bi bi-book-fill text-warning" style="width:18px;"></i>
+                        <span class="text-muted">Kurs:</span>
+                        <span class="fw-600" style="color:#1e293b;">{{ group.course.name }}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2" style="font-size:.85rem;">
+                        <i class="bi bi-person-badge-fill text-success" style="width:18px;"></i>
+                        <span class="text-muted">Mentor:</span>
+                        <span class="fw-600" style="color:#1e293b;">
+                            {{ group.mentor.get_full_name|default:group.mentor.username|default:"Biriktirilmagan" }}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2" style="font-size:.85rem;">
+                        <i class="bi bi-calendar3 text-primary" style="width:18px;"></i>
+                        <span class="text-muted">Boshlanish:</span>
+                        <span class="fw-600" style="color:#1e293b;">{{ group.start_date }}</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    {% if user.is_admin or user.is_mentor %}
+                    <a href="{% url 'attendance' group.id %}"
+                       class="btn btn-primary">
+                        <i class="bi bi-clipboard2-check-fill me-2"></i>Davomat va Baholash
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'group_list' %}"
+                       class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Ortga
+                    </a>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <!-- Talabalar ro'yxati va Qo'shish formasi -->
-    <div class="col-md-8">
+    <!-- ── Right: Students ── -->
+    <div class="col-lg-8">
+
+        <!-- Add Student Form (Admin only) -->
         {% if user.is_admin %}
-            <div class="card p-3 shadow-sm mb-4">
-                <h5>Guruhga Talaba Qo'shish</h5>
-                <form method="post" class="d-flex gap-2">
+        <div class="card mb-3">
+            <div class="card-body p-4">
+                <h5 class="fw-700 mb-3" style="font-size:.95rem; color:#1e293b;">
+                    <i class="bi bi-person-plus-fill text-primary me-2"></i>Guruhga Talaba Qo'shish
+                </h5>
+                <form method="post" class="d-flex gap-3 align-items-end">
                     {% csrf_token %}
                     <div class="flex-grow-1">
+                        <label class="form-label">Talabani Tanlang</label>
                         {{ form.student }}
                     </div>
-                    <button type="submit" class="btn btn-primary">+ Qo'shish</button>
+                    <button type="submit" class="btn btn-primary" style="flex-shrink:0;">
+                        <i class="bi bi-plus-circle me-1"></i>Qo'shish
+                    </button>
                 </form>
             </div>
+        </div>
         {% endif %}
 
-        <div class="card p-3 shadow-sm">
-            <h5>Guruh Talabalari ({{ students.count }} ta)</h5>
-            <hr>
+        <!-- Students Table -->
+        <div class="table-card card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-people-fill text-primary"></i>
+                <h5>Guruh Talabalari</h5>
+                <span class="badge-pill badge-info ms-auto">{{ students.count }} ta</span>
+            </div>
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Ism Familiya</th>
                             <th>Username</th>
-                            <th>Qo'shilgan Sanasi</th>
+                            <th>Qo'shilgan Sana</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in students %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ item.student.get_full_name|default:item.student.username }}</td>
-                            <td>@{{ item.student.username }}</td>
-                            <td>{{ item.joined_at }}</td>
+                            <td class="text-muted fw-600" style="font-size:.8rem;">{{ forloop.counter }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:32px;height:32px;background:#eef2ff;border-radius:50%;
+                                                display:flex;align-items:center;justify-content:center;
+                                                font-size:.75rem; font-weight:700; color:#6366f1; flex-shrink:0;">
+                                        {{ item.student.get_full_name|default:item.student.username|slice:":1"|upper }}
+                                    </div>
+                                    <span class="fw-600" style="font-size:.875rem; color:#1e293b;">
+                                        {{ item.student.get_full_name|default:item.student.username }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-pill badge-info">@{{ item.student.username }}</span>
+                            </td>
+                            <td>
+                                <span style="font-size:.82rem; color:#64748b;">
+                                    <i class="bi bi-calendar3 me-1"></i>{{ item.joined_at }}
+                                </span>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center text-muted">Bu guruhda xali talabalar yo'q.</td>
+                            <td colspan="4" class="text-center py-5">
+                                <i class="bi bi-person-x" style="font-size:2.5rem; color:#cbd5e1; display:block; margin-bottom:12px;"></i>
+                                <span class="text-muted" style="font-size:.875rem;">Bu guruhda xali talabalar yo'q.</span>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </div>
+
 {% endblock %}

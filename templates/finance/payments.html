@@ -1,71 +1,118 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}Moliya — Najot ERP{% endblock %}
+{% block page_title %}Moliya & To'lovlar{% endblock %}
+{% block nav_finance %}active{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- To'lov qabul qilish formasi -->
+
+<div class="page-header">
+    <div>
+        <h1>Moliya & To'lovlar</h1>
+        <div class="page-subtitle">To'lovlar holati va tarixi</div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- ── Left: Payment Form (Admin only) ── -->
     {% if user.is_admin %}
-    <div class="col-md-4 mb-4">
-        <div class="card p-3 shadow-sm bg-white">
-            <h5 class="mb-3">➕ Yangi To'lov Qabul Qilish</h5>
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label">Talaba</label>
-                    {{ form.student }}
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Guruh</label>
-                    {{ form.group }}
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Summa (so'mda)</label>
-                    {{ form.amount }}
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">To'lov Turi</label>
-                    {{ form.payment_type }}
-                </div>
-                <button type="submit" class="btn btn-success w-100">To'lovni Saqlash</button>
-            </form>
+    <div class="col-lg-4">
+        <div class="card" style="position:sticky; top:90px;">
+            <div style="height:5px; background:linear-gradient(90deg,#10b981,#059669);"></div>
+            <div class="card-body p-4">
+                <h5 class="fw-700 mb-4" style="font-size:.95rem; color:#1e293b;">
+                    <i class="bi bi-plus-circle-fill text-success me-2"></i>Yangi To'lov Qabul Qilish
+                </h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Talaba</label>
+                        {{ form.student }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Guruh</label>
+                        {{ form.group }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Summa (so'mda)</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">To'lov Turi</label>
+                        {{ form.payment_type }}
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-check-circle-fill me-2"></i>To'lovni Saqlash
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
     {% endif %}
 
-    <!-- Qarzdorlik va To'lovlar Ro'yxati -->
-    <div class="col-md-{% if user.is_admin %}8{% else %}12{% endif %}">
-        <!-- Talabalar Balansi va Qarzdorligi -->
-        <div class="card p-3 shadow-sm mb-4 bg-white">
-            <h5>📊 Talabalar Qarzdorlik Holati</h5>
-            <hr>
+    <!-- ── Right: Tables ── -->
+    <div class="col-lg-{% if user.is_admin %}8{% else %}12{% endif %}">
+
+        <!-- Students Balance Table -->
+        <div class="table-card card mb-4">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-bar-chart-fill text-primary"></i>
+                <h5>Talabalar Qarzdorlik Holati</h5>
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Talaba</th>
                             <th>Guruh</th>
                             <th>Kurs Narxi</th>
                             <th>To'landi</th>
-                            <th>Qarzdorlik / Balans</th>
+                            <th>Holat</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in students_balance %}
                         <tr>
-                            <td><strong>{{ item.student.get_full_name|default:item.student.username }}</strong></td>
-                            <td>{{ item.group.name }}</td>
-                            <td>{{ item.course_price }} so'm</td>
-                            <td class="text-success fw-bold">{{ item.total_paid }} so'm</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:32px;height:32px;background:#eef2ff;border-radius:50%;
+                                                display:flex;align-items:center;justify-content:center;
+                                                font-size:.75rem; font-weight:700; color:#6366f1; flex-shrink:0;">
+                                        {{ item.student.get_full_name|default:item.student.username|slice:":1"|upper }}
+                                    </div>
+                                    <span class="fw-600" style="font-size:.875rem; color:#1e293b;">
+                                        {{ item.student.get_full_name|default:item.student.username }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td style="font-size:.82rem;">{{ item.group.name }}</td>
+                            <td style="font-size:.82rem; color:#374151;">{{ item.course_price }} so'm</td>
+                            <td>
+                                <span class="fw-700" style="color:#10b981; font-size:.875rem;">
+                                    {{ item.total_paid }} so'm
+                                </span>
+                            </td>
                             <td>
                                 {% if item.balance > 0 %}
-                                    <span class="badge bg-danger">{{ item.balance }} so'm (Qarzi bor)</span>
+                                    <span class="badge-pill badge-inactive">
+                                        <i class="bi bi-exclamation-triangle-fill me-1" style="font-size:.65rem;"></i>
+                                        {{ item.balance }} so'm qarz
+                                    </span>
                                 {% else %}
-                                    <span class="badge bg-success">To'liq to'langan</span>
+                                    <span class="badge-pill badge-active">
+                                        <i class="bi bi-check-circle-fill me-1" style="font-size:.65rem;"></i>
+                                        To'liq to'langan
+                                    </span>
                                 {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center">A'zo bo'lgan talabalar yo'q.</td>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-people" style="font-size:2.5rem; color:#cbd5e1; display:block; margin-bottom:12px;"></i>
+                                <span class="text-muted">A'zo bo'lgan talabalar yo'q.</span>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -73,12 +120,14 @@
             </div>
         </div>
 
-        <!-- So'nggi To'lovlar Tarixi -->
-        <div class="card p-3 shadow-sm bg-white">
-            <h5>🧾 So'nggi To'lovlar Tarixi</h5>
-            <hr>
+        <!-- Payment History Table -->
+        <div class="table-card card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-receipt text-success"></i>
+                <h5>So'nggi To'lovlar Tarixi</h5>
+            </div>
             <div class="table-responsive">
-                <table class="table table-striped align-middle">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -92,22 +141,42 @@
                     <tbody>
                         {% for payment in payments %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ payment.student.get_full_name|default:payment.student.username }}</td>
-                            <td>{{ payment.group.name }}</td>
-                            <td class="fw-bold">{{ payment.amount }} so'm</td>
-                            <td><span class="badge bg-info text-dark">{{ payment.get_payment_type_display }}</span></td>
-                            <td>{{ payment.created_at|date:"d.m.Y H:i" }}</td>
+                            <td class="text-muted" style="font-size:.8rem; font-weight:600;">{{ forloop.counter }}</td>
+                            <td>
+                                <span class="fw-600" style="font-size:.875rem; color:#1e293b;">
+                                    {{ payment.student.get_full_name|default:payment.student.username }}
+                                </span>
+                            </td>
+                            <td style="font-size:.82rem;">{{ payment.group.name }}</td>
+                            <td>
+                                <span class="fw-700" style="color:#10b981; font-size:.875rem;">
+                                    {{ payment.amount }} so'm
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge-pill badge-info">
+                                    {{ payment.get_payment_type_display }}
+                                </span>
+                            </td>
+                            <td style="font-size:.82rem; color:#64748b;">
+                                <i class="bi bi-clock me-1"></i>{{ payment.created_at|date:"d.m.Y H:i" }}
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">Hali to'lovlar amalga oshirilmagan.</td>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-cash-stack" style="font-size:2.5rem; color:#cbd5e1; display:block; margin-bottom:12px;"></i>
+                                <span class="text-muted">Hali to'lovlar amalga oshirilmagan.</span>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
+
 </div>
+
 {% endblock %}

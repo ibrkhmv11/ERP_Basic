@@ -1,49 +1,102 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}Guruhlar — Najot ERP{% endblock %}
+{% block page_title %}Guruhlar{% endblock %}
+{% block nav_groups %}active{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Guruhlar Ro'yxati</h2>
+
+<div class="page-header">
+    <div>
+        <h1>Guruhlar Ro'yxati</h1>
+        <div class="page-subtitle">Barcha guruhlar holati</div>
+    </div>
     {% if user.is_admin %}
-        <a href="{% url 'group_create' %}" class="btn btn-primary">+ Yangi Guruh</a>
+        <a href="{% url 'group_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill me-2"></i>Yangi Guruh
+        </a>
     {% endif %}
 </div>
 
-<div class="table-responsive bg-white card p-3 shadow-sm">
-    <table class="table table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Guruh Nomi</th>
-                <th>Kurs</th>
-                <th>Mentor</th>
-                <th>Boshlanish Sanasi</th>
-                <th>Holati</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for group in groups %}
-            <tr>
-                <td>
-                    <a href="{% url 'group_detail' group.pk %}" class="fw-bold text-decoration-none">
-                        {{ group.name }}
-                    </a>
-                </td>
-                <td>{{ group.course.name }}</td>
-                <td>{{ group.mentor.get_full_name|default:group.mentor.username|default:"Biriktirilmagan" }}</td>
-                <td>{{ group.start_date }}</td>
-                <td>
-                    {% if group.is_active %}
-                        <span class="badge bg-success">Faol</span>
-                    {% else %}
-                        <span class="badge bg-danger">Yopilgan</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center">Hozircha guruhlar yo'q.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="table-card card">
+    <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-people-fill text-primary"></i>
+        <h5>Guruhlar</h5>
+        <span class="badge-pill badge-info ms-auto">Jami: {% for g in groups %}{% empty %}0{% endfor %}{{ groups|length }}</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Guruh Nomi</th>
+                    <th>Kurs</th>
+                    <th>Mentor</th>
+                    <th>Boshlanish Sanasi</th>
+                    <th>Holati</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td class="text-muted fw-600" style="font-size:.8rem;">{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'group_detail' group.pk %}"
+                           class="fw-700 text-decoration-none"
+                           style="color:#6366f1; font-size:.875rem;">
+                            <i class="bi bi-diagram-3 me-1"></i>{{ group.name }}
+                        </a>
+                    </td>
+                    <td>
+                        <span style="font-size:.82rem; color:#374151;">{{ group.course.name }}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:28px;height:28px;background:#eef2ff;border-radius:50%;
+                                        display:flex;align-items:center;justify-content:center;
+                                        font-size:.7rem; font-weight:700; color:#6366f1; flex-shrink:0;">
+                                {{ group.mentor.get_full_name|default:group.mentor.username|default:"?"|slice:":1"|upper }}
+                            </div>
+                            <span style="font-size:.82rem;">
+                                {{ group.mentor.get_full_name|default:group.mentor.username|default:"Biriktirilmagan" }}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size:.82rem; color:#64748b;">
+                            <i class="bi bi-calendar3 me-1"></i>{{ group.start_date }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if group.is_active %}
+                            <span class="badge-pill badge-active">
+                                <i class="bi bi-circle-fill me-1" style="font-size:.45rem; vertical-align:middle;"></i>Faol
+                            </span>
+                        {% else %}
+                            <span class="badge-pill badge-inactive">
+                                <i class="bi bi-circle-fill me-1" style="font-size:.45rem; vertical-align:middle;"></i>Yopilgan
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'group_detail' group.pk %}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1"></i>Ko'rish
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="bi bi-people" style="font-size:2.5rem; color:#cbd5e1; display:block; margin-bottom:12px;"></i>
+                        <span class="text-muted">Hozircha guruhlar yo'q.</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
 {% endblock %}

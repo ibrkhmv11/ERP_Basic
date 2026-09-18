@@ -1,20 +1,49 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}Guruhga Talaba Biriktirish — Najot ERP{% endblock %}
+{% block page_title %}Talaba Biriktirish{% endblock %}
+{% block nav_groups %}active{% endblock %}
 
 {% block content %}
-<div class="container mt-4" style="max-width: 600px;">
-    <div class="card shadow p-4">
-        <h3 class="mb-4 text-success">🎓 Guruhga Talaba Biriktirish</h3>
-        
-        <form method="POST">
-            {% csrf_token %}
-            
-            <div class="mb-3">
-                {{ form.as_p }}
+
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+        <div class="page-header">
+            <div>
+                <h1>Guruhga Talaba Biriktirish</h1>
+                <div class="page-subtitle">Talabani guruhga qo'shish</div>
             </div>
-            
-            <button type="submit" class="btn btn-success w-100 mb-2">Talabani Biriktirish</button>
-            <a href="{% url 'group_list' %}" class="btn btn-outline-secondary w-100">Orqaga qaytish</a>
-        </form>
+        </div>
+
+        <div class="card">
+            <div style="height:5px; background:linear-gradient(90deg,#38bdf8,#0ea5e9);"></div>
+            <div class="card-body p-4">
+                <!-- Info box -->
+                <div class="d-flex align-items-center gap-3 p-3 mb-4 rounded-3"
+                     style="background:#f0f9ff; border:1.5px solid #bae6fd;">
+                    <i class="bi bi-info-circle-fill" style="font-size:1.3rem; color:#0284c7; flex-shrink:0;"></i>
+                    <div style="font-size:.82rem; color:#0369a1;">
+                        Quyidagi formada talabani va guruhni tanlab, "Biriktirish" tugmasini bosing.
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        {{ form.as_p }}
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-person-plus-fill me-2"></i>Talabani Biriktirish
+                        </button>
+                        <a href="{% url 'group_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Orqaga qaytish
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock %}

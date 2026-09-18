@@ -1,46 +1,193 @@
-{% extends 'base.html' %}
+{% extends 'base_admin.html' %}
+
+{% block title %}Dashboard — Najot ERP{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">👑 Admin Boshqaruv Paneli</h2>
 
-<!-- Statistika Kartochkalari -->
-<div class="row mb-4">
-    <div class="col-md-3"><div class="card bg-primary text-white p-3 shadow-sm"><h4>{{ total_students }}</h4>Jami Talabalar</div></div>
-    <div class="col-md-3"><div class="card bg-success text-white p-3 shadow-sm"><h4>{{ total_mentors }}</h4>Jami Mentorlar</div></div>
-    <div class="col-md-3"><div class="card bg-warning text-dark p-3 shadow-sm"><h4>{{ total_courses }}</h4>Mavjud Kurslar</div></div>
-    <div class="col-md-3"><div class="card bg-info text-white p-3 shadow-sm"><h4>{{ total_groups }}</h4>Faol Guruhlar</div></div>
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1>Admin Boshqaruv Paneli</h1>
+        <div class="page-subtitle">Tizim umumiy ko'rinishi va tezkor boshqaruv</div>
+    </div>
 </div>
 
-<div class="row">
-    <!-- Umumiy Tushum -->
-    <div class="col-md-6 mb-3">
-        <div class="card p-4 shadow-sm border-start border-4 border-success h-100">
-            <h5>💰 Umumiy Tushum</h5>
-            <h3 class="text-success fw-bold mt-2">{{ total_revenue }} so'm</h3>
+<!-- ── Stat Cards Row 1 ── -->
+<div class="row g-3 mb-4">
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-card stat-indigo h-100">
+            <div class="stat-icon"><i class="bi bi-mortarboard-fill"></i></div>
+            <div class="stat-value">{{ total_students }}</div>
+            <div class="stat-label">Jami Talabalar</div>
+            <div class="stat-trend"><i class="bi bi-arrow-up-right"></i> Faol</div>
         </div>
     </div>
 
-    <!-- Tezkor Boshqaruv -->
-    <div class="col-md-6 mb-3">
-        <div class="card p-4 shadow-sm h-100">
-            <h5 class="mb-3">⚡ Tezkor Boshqaruv</h5>
-            <div class="d-grid gap-2">
-                <!-- Yangi qo'shilgan tugma -->
-                <a href="{% url 'user_management' %}" class="btn btn-outline-dark">
-                    👥 Foydalanuvchilar va Rollarni Boshqarish
-                </a>
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-card stat-emerald h-100">
+            <div class="stat-icon"><i class="bi bi-person-badge-fill"></i></div>
+            <div class="stat-value">{{ total_mentors }}</div>
+            <div class="stat-label">Jami Mentorlar</div>
+            <div class="stat-trend"><i class="bi bi-circle-fill" style="font-size:.5rem;"></i> Online</div>
+        </div>
+    </div>
 
-                <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Kurslar</a>
-                <a href="{% url 'group_list' %}" class="btn btn-outline-success">Guruhlar</a>
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-card stat-amber h-100">
+            <div class="stat-icon"><i class="bi bi-book-fill"></i></div>
+            <div class="stat-value">{{ total_courses }}</div>
+            <div class="stat-label">Mavjud Kurslar</div>
+            <div class="stat-trend"><i class="bi bi-collection-fill"></i> Ta'lim</div>
+        </div>
+    </div>
 
-                <!-- O'ZIMIZNING ICHKI SAHIFA: Guruhga o'quvchi biriktirish -->
-                <a href="{% url 'assign_student' %}" class="btn btn-outline-secondary">
-                    🎓 Guruhga Talaba Biriktirish
-                </a>
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-card stat-sky h-100">
+            <div class="stat-icon"><i class="bi bi-diagram-3-fill"></i></div>
+            <div class="stat-value">{{ total_groups }}</div>
+            <div class="stat-label">Faol Guruhlar</div>
+            <div class="stat-trend"><i class="bi bi-check2-circle"></i> Faol</div>
+        </div>
+    </div>
 
-                <a href="{% url 'payment_list' %}" class="btn btn-outline-warning">Moliya</a>
+</div>
+
+<!-- ── Second Row: Revenue + Quick Actions ── -->
+<div class="row g-3">
+
+    <!-- Revenue Card -->
+    <div class="col-lg-5 col-md-6">
+        <div class="card h-100" style="border-left: 4px solid #10b981;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <div class="text-uppercase fw-700 mb-1"
+                             style="font-size:.7rem; letter-spacing:.8px; color:#94a3b8; font-weight:700;">
+                            Umumiy Tushum
+                        </div>
+                        <h3 class="fw-800 mb-0" style="font-size:2rem; color:#10b981; letter-spacing:-.5px;">
+                            {{ total_revenue|default:"0" }}
+                            <span style="font-size:1rem; color:#64748b; font-weight:500;">so'm</span>
+                        </h3>
+                    </div>
+                    <div style="width:56px;height:56px; background:#dcfce7; border-radius:16px;
+                                display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-cash-coin" style="font-size:1.6rem; color:#16a34a;"></i>
+                    </div>
+                </div>
+                <div style="height:4px; background:#f1f5f9; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:72%; background:linear-gradient(90deg,#10b981,#34d399); border-radius:4px;"></div>
+                </div>
+                <div class="mt-2 text-muted" style="font-size:.78rem;">
+                    <i class="bi bi-graph-up-arrow text-success me-1"></i>
+                    Moliya sahifasida batafsil ko'ring
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Quick Actions -->
+    <div class="col-lg-7 col-md-6">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-700 mb-3" style="font-size:.95rem; color:#1e293b;">
+                    <i class="bi bi-lightning-fill text-warning me-2"></i>Tezkor Boshqaruv
+                </h5>
+                <div class="row g-2">
+
+                    <div class="col-6">
+                        <a href="{% url 'user_management' %}"
+                           class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none"
+                           style="background:#f8f7ff; border:1.5px solid #e0e7ff; transition:all .2s;"
+                           onmouseover="this.style.background='#eef2ff'; this.style.borderColor='#6366f1';"
+                           onmouseout="this.style.background='#f8f7ff'; this.style.borderColor='#e0e7ff';">
+                            <div style="width:40px;height:40px;background:#eef2ff;border-radius:10px;
+                                        display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                                <i class="bi bi-shield-person-fill" style="color:#6366f1; font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.82rem; font-weight:700; color:#1e293b;">Foydalanuvchilar</div>
+                                <div style="font-size:.72rem; color:#94a3b8;">Rollarni boshqarish</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-6">
+                        <a href="{% url 'course_list' %}"
+                           class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none"
+                           style="background:#fffbf0; border:1.5px solid #fde68a; transition:all .2s;"
+                           onmouseover="this.style.background='#fef9c3'; this.style.borderColor='#f59e0b';"
+                           onmouseout="this.style.background='#fffbf0'; this.style.borderColor='#fde68a';">
+                            <div style="width:40px;height:40px;background:#fef9c3;border-radius:10px;
+                                        display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                                <i class="bi bi-book-fill" style="color:#d97706; font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.82rem; font-weight:700; color:#1e293b;">Kurslar</div>
+                                <div style="font-size:.72rem; color:#94a3b8;">Kurs ro'yxati</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-6">
+                        <a href="{% url 'group_list' %}"
+                           class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none"
+                           style="background:#f0fdf4; border:1.5px solid #bbf7d0; transition:all .2s;"
+                           onmouseover="this.style.background='#dcfce7'; this.style.borderColor='#10b981';"
+                           onmouseout="this.style.background='#f0fdf4'; this.style.borderColor='#bbf7d0';">
+                            <div style="width:40px;height:40px;background:#dcfce7;border-radius:10px;
+                                        display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                                <i class="bi bi-people-fill" style="color:#059669; font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.82rem; font-weight:700; color:#1e293b;">Guruhlar</div>
+                                <div style="font-size:.72rem; color:#94a3b8;">Guruh ro'yxati</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-6">
+                        <a href="{% url 'assign_student' %}"
+                           class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none"
+                           style="background:#f0f9ff; border:1.5px solid #bae6fd; transition:all .2s;"
+                           onmouseover="this.style.background='#e0f2fe'; this.style.borderColor='#38bdf8';"
+                           onmouseout="this.style.background='#f0f9ff'; this.style.borderColor='#bae6fd';">
+                            <div style="width:40px;height:40px;background:#e0f2fe;border-radius:10px;
+                                        display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                                <i class="bi bi-person-plus-fill" style="color:#0284c7; font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.82rem; font-weight:700; color:#1e293b;">Talaba Biriktir</div>
+                                <div style="font-size:.72rem; color:#94a3b8;">Guruhga qo'shish</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-12">
+                        <a href="{% url 'payment_list' %}"
+                           class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none"
+                           style="background:#fff7ed; border:1.5px solid #fed7aa; transition:all .2s;"
+                           onmouseover="this.style.background='#ffedd5'; this.style.borderColor='#fb923c';"
+                           onmouseout="this.style.background='#fff7ed'; this.style.borderColor='#fed7aa';">
+                            <div style="width:40px;height:40px;background:#ffedd5;border-radius:10px;
+                                        display:flex;align-items:center;justify-content:center; flex-shrink:0;">
+                                <i class="bi bi-cash-stack" style="color:#ea580c; font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.82rem; font-weight:700; color:#1e293b;">Moliya & To'lovlar</div>
+                                <div style="font-size:.72rem; color:#94a3b8;">To'lovlarni ko'rish va qabul qilish</div>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
 {% endblock %}

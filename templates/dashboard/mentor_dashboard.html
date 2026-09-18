@@ -1,34 +1,158 @@
-{% extends 'base.html' %}
+{% extends 'base_mentor.html' %}
+
+{% block title %}Mentor Dashboard — Najot ERP{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">👨‍🏫 Mentor Boshqaruv Paneli</h2>
 
-<div class="card p-4 shadow-sm bg-white">
-    <h5>📋 Mening Guruhlarim va Davomat</h5>
-    <hr>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Guruh Nomi</th>
-                    <th>Kurs</th>
-                    <th>Amal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for group in my_groups %}
-                <tr>
-                    <td><strong>{{ group.name }}</strong></td>
-                    <td>{{ group.course.name }}</td>
-                    <td>
-                        <a href="{% url 'attendance' group.id %}" class="btn btn-sm btn-warning">📋 Davomat va Baholash</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="3" class="text-center">Sizga biriktirilgan faol guruhlar yo'q.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<!-- ── Welcome Header ── -->
+<div class="page-header mb-4">
+    <div>
+        <h1>Salom, {{ user.get_full_name|default:user.username }}! 👋</h1>
+        <div class="page-subtitle">Mening guruhlarim va bugungi dars holati</div>
+    </div>
+    <!-- Live date badge -->
+    <div class="topbar-badge" style="padding:10px 18px; font-size:.82rem; gap:8px;
+                                     background:linear-gradient(135deg,#ccfbf1,#99f6e4); color:#0f766e;">
+        <i class="bi bi-calendar3-week-fill"></i>
+        <span id="liveDateBadge" style="font-weight:700;"></span>
     </div>
 </div>
+
+<!-- ── Stat row ── -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-sm-6">
+        <div class="stat-card stat-teal h-100">
+            <div class="stat-icon"><i class="bi bi-diagram-3-fill"></i></div>
+            <div class="stat-value">{{ my_groups|length }}</div>
+            <div class="stat-label">Biriktirilgan Guruhlar</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="stat-card stat-emerald h-100">
+            <div class="stat-icon"><i class="bi bi-mortarboard-fill"></i></div>
+            <div class="stat-value">
+                {% with total=0 %}
+                    {% for g in my_groups %}{{ g.students.count|add:total }}{% endfor %}
+                {% endwith %}
+                —
+            </div>
+            <div class="stat-label">Jami Talabalar</div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="stat-card stat-sky h-100">
+            <div class="stat-icon"><i class="bi bi-clipboard2-check-fill"></i></div>
+            <div class="stat-value">{{ my_groups|length }}</div>
+            <div class="stat-label">Bugun Davomat Olinishi Kerak</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Group Cards ── -->
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h5 class="fw-800 mb-0" style="font-size:1rem; color:#1e293b; letter-spacing:-.3px;">
+        <i class="bi bi-people-fill me-2" style="color:#0d9488;"></i>Mening Guruhlarim
+    </h5>
+    <a href="{% url 'group_list' %}" class="btn btn-sm btn-outline-primary"
+       style="border-color:#0d9488; color:#0d9488; border-radius:8px;">
+        <i class="bi bi-grid-3x3-gap me-1"></i>Barchasi
+    </a>
+</div>
+
+{% if my_groups %}
+<div class="row g-3">
+    {% for group in my_groups %}
+    <div class="col-xl-3 col-lg-4 col-md-6">
+        <div class="group-card card">
+            <!-- Top color stripe -->
+            <div class="card-stripe"></div>
+
+            <div class="card-inner">
+                <!-- Icon -->
+                <div class="group-icon">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </div>
+
+                <!-- Name + Course -->
+                <div class="group-name">{{ group.name }}</div>
+                <div class="group-course">
+                    <i class="bi bi-book-fill" style="color:#0d9488;"></i>
+                    {{ group.course.name }}
+                </div>
+
+                <!-- Meta info -->
+                <div class="group-meta">
+                    <div class="group-meta-item">
+                        <span class="meta-label">Boshlanish</span>
+                        <span class="meta-value">
+                            <i class="bi bi-calendar3" style="font-size:.7rem; color:#94a3b8;"></i>
+                            {{ group.start_date }}
+                        </span>
+                    </div>
+                    <div class="group-meta-item">
+                        <span class="meta-label">Holati</span>
+                        <span>
+                            {% if group.is_active %}
+                                <span class="badge-pill badge-active" style="font-size:.67rem;">Faol</span>
+                            {% else %}
+                                <span class="badge-pill badge-inactive" style="font-size:.67rem;">Yopiq</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="group-meta-item">
+                        <span class="meta-label">Talabalar</span>
+                        <span class="meta-value">
+                            <i class="bi bi-people" style="font-size:.75rem; color:#0d9488;"></i>
+                            {{ group.students.count }} ta
+                        </span>
+                    </div>
+                </div>
+
+                <!-- CTA button -->
+                <a href="{% url 'attendance' group.id %}" class="btn-attendance">
+                    <i class="bi bi-clipboard2-check-fill"></i>
+                    Davomat va Baholash
+                </a>
+
+                <!-- View detail link -->
+                <a href="{% url 'group_detail' group.pk %}"
+                   class="d-block text-center mt-2 text-decoration-none"
+                   style="font-size:.76rem; color:#94a3b8; font-weight:500;">
+                    <i class="bi bi-eye me-1"></i>Guruhni batafsil ko'rish
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- Empty state -->
+<div class="card p-5 text-center">
+    <div style="width:72px;height:72px; background:#ccfbf1; border-radius:20px;
+                display:flex;align-items:center;justify-content:center; margin:0 auto 20px;">
+        <i class="bi bi-people" style="font-size:2rem; color:#0d9488;"></i>
+    </div>
+    <h5 class="fw-700 mb-2" style="color:#1e293b;">Guruhlar Topilmadi</h5>
+    <p class="text-muted mb-0" style="font-size:.875rem;">
+        Sizga hali hech qanday faol guruh biriktirilmagan.<br>
+        Administrator bilan bog'laning.
+    </p>
+</div>
+{% endif %}
+
+<script>
+    // Live date display
+    function formatDate(d) {
+        const days = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+        const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun',
+                        'Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+        return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+    const badge = document.getElementById('liveDateBadge');
+    if (badge) badge.textContent = formatDate(new Date());
+</script>
+
 {% endblock %}
